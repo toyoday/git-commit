@@ -1,12 +1,12 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
-gem "octokit"
-gem "byebug"
-gem "tapp"
-gem "rubocop", require: false
-gem "dotenv-rails"
+gem 'byebug'
+gem 'clockwork'
+gem 'dotenv-rails'
 gem 'http'
 gem 'json'
-gem "clockwork"
+gem 'octokit'
+gem 'rubocop', require: false
+gem 'tapp'
