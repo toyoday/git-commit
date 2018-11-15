@@ -3,12 +3,13 @@ require 'http'
 require 'json'
 require 'byebug'
 
-cr = CommitReceiver.new
-cr.commit_get
+cr = Commit.new
+cr.get_from_github
+
 Dotenv.load
 response = HTTP.post('https://slack.com/api/chat.postMessage', params: {
                        token: ENV['SLACK_API_TOKEN'],
-                       channel: '#dev',
+                       channel: '#test_t',
                        text: cr.message.insert(0, "```\n").insert(-1, '```'),
                        as_user: true
                      })
