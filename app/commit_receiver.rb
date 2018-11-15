@@ -18,23 +18,15 @@ class Commit
   end
 
   def get_from_github
-    commit_lists = fetch_commits
-
-    num_of_days = today_is_monday? ? [1, 2, 3] : [1]
-    neccesary_dates = get_neccesary_dates(num_of_days)
+    num_of_days = today_is_monday? ? 3 : 1
+    commit_lists = fetch_commits.select { |commit| Date.today - commit[:commit][:author][:date].to_date <= num_of_days }
 
     commit_lists.each.with_index(1) do |commit, index|
-      next unless neccesary_dates.include?(commit[:commit][:author][:date].to_date)
-
       formated_message = commit[:commit][:message].gsub(/\*(.*?)\n/, '')
                                                   .gsub(/(\r\n?|\n)/, '')
       author = commit[:author][:login]
       @message += "#{index}. #{formated_message}(#{author})\n"
     end
-  end
-
-  def get_neccesary_dates(diff_numbers)
-    diff_numbers.map { |diff_number| Date.today - diff_number }
   end
 
   def fetch_commits
