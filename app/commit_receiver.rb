@@ -4,6 +4,8 @@ require 'tapp'
 require 'date'
 require 'dotenv'
 
+Dotenv.load
+
 # comment return
 class Commit
   attr_accessor :message
@@ -13,12 +15,10 @@ class Commit
     @message = ''
   end
 
-
   def get_from_github
     make_date_diffs = lambda { |arr|
       arr.map { |elem| Date.today - elem }
     }
-    Dotenv.load
     client = Octokit::Client.new login: ENV['LOGIN'], password: ENV['PASSWORD']
     commitlist = client.commits ENV['REPOSITORI']
     compare_list = make_date_diffs.call(Date.today.wday == 1 ? [1, 2, 3] : [1])
