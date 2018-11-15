@@ -19,7 +19,9 @@ class Commit
 
   def get_from_github
     num_of_days = today_is_monday? ? 3 : 1
-    commit_lists = fetch_commits.select { |commit| Date.today - commit[:commit][:author][:date].to_date <= num_of_days }
+    commit_lists = fetch_commits.select do |commit|
+      neccesary_commit?(date_of(commit), num_of_days)
+    end
 
     commit_lists.each.with_index(1) do |commit, index|
       formated_message = commit[:commit][:message].gsub(/\*(.*?)\n/, '')
@@ -36,5 +38,13 @@ class Commit
 
   def today_is_monday?
     Date.today.wday == MONDEY_INDEX
+  end
+
+  def neccesary_commit?(commit_date, num_of_days)
+    Date.today - commit_date <= num_of_days
+  end
+
+  def date_of(commit)
+    commit[:commit][:author][:date].to_date
   end
 end
