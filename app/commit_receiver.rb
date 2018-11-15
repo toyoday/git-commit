@@ -10,6 +10,8 @@ Dotenv.load
 class Commit
   attr_accessor :message
 
+  MONDEY_INDEX = 1
+
   def initialize
     # @message = self.class.get_from_github
     @message = ''
@@ -21,7 +23,7 @@ class Commit
     }
     client = Octokit::Client.new login: ENV['LOGIN'], password: ENV['PASSWORD']
     commitlist = client.commits ENV['REPOSITORI']
-    compare_list = make_date_diffs.call(Date.today.wday == 1 ? [1, 2, 3] : [1])
+    compare_list = make_date_diffs.call(Date.today.wday == MONDEY_INDEX ? [1, 2, 3] : [1])
 
     commitlist.each.with_index(1) do |commit, index|
       next unless compare_list.include?(commit[:commit][:author][:date].to_date)
