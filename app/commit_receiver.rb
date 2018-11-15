@@ -18,12 +18,11 @@ class Commit
   end
 
   def get_from_github
-    client = Octokit::Client.new login: ENV['LOGIN'], password: ENV['PASSWORD']
-    commitlist = client.commits ENV['REPOSITORY']
+    commit_lists = fetch_commits
 
     compare_list = needed_dates(Date.today.wday == MONDEY_INDEX ? [1, 2, 3] : [1])
 
-    commitlist.each.with_index(1) do |commit, index|
+    commit_lists.each.with_index(1) do |commit, index|
       next unless compare_list.include?(commit[:commit][:author][:date].to_date)
 
       formated_message = commit[:commit][:message].gsub(/\*(.*?)\n/, '')
@@ -36,4 +35,10 @@ class Commit
   def needed_dates(diff_numbers)
     diff_numbers.map { |diff_number| Date.today - diff_number }
   end
+
+  def fetch_commits
+    client = Octokit::Client.new login: ENV['LOGIN'], password: ENV['PASSWORD']
+    client.commits ENV['REPOSITORY']
+  end
+
 end
