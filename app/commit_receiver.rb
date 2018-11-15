@@ -18,12 +18,10 @@ class Commit
   end
 
   def get_from_github
-    make_date_diffs = lambda { |arr|
-      arr.map { |elem| Date.today - elem }
-    }
     client = Octokit::Client.new login: ENV['LOGIN'], password: ENV['PASSWORD']
-    commitlist = client.commits ENV['REPOSITORI']
-    compare_list = make_date_diffs.call(Date.today.wday == MONDEY_INDEX ? [1, 2, 3] : [1])
+    commitlist = client.commits ENV['REPOSITORY']
+
+    compare_list = needed_dates(Date.today.wday == MONDEY_INDEX ? [1, 2, 3] : [1])
 
     commitlist.each.with_index(1) do |commit, index|
       next unless compare_list.include?(commit[:commit][:author][:date].to_date)
@@ -33,5 +31,9 @@ class Commit
       author = commit[:author][:login]
       @message += "#{index}. #{formated_message}(#{author})\n"
     end
+  end
+
+  def needed_dates(diff_numbers)
+    diff_numbers.map { |diff_number| Date.today - diff_number }
   end
 end
