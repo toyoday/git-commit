@@ -20,10 +20,11 @@ class Commit
   def get_from_github
     commit_lists = fetch_commits
 
-    compare_list = needed_dates(Date.today.wday == MONDEY_INDEX ? [1, 2, 3] : [1])
+    num_of_days = today_is_monday? ? [1, 2, 3] : [1]
+    neccesary_dates = get_neccesary_dates(num_of_days)
 
     commit_lists.each.with_index(1) do |commit, index|
-      next unless compare_list.include?(commit[:commit][:author][:date].to_date)
+      next unless neccesary_dates.include?(commit[:commit][:author][:date].to_date)
 
       formated_message = commit[:commit][:message].gsub(/\*(.*?)\n/, '')
                                                   .gsub(/(\r\n?|\n)/, '')
@@ -32,7 +33,7 @@ class Commit
     end
   end
 
-  def needed_dates(diff_numbers)
+  def get_neccesary_dates(diff_numbers)
     diff_numbers.map { |diff_number| Date.today - diff_number }
   end
 
@@ -41,4 +42,7 @@ class Commit
     client.commits ENV['REPOSITORY']
   end
 
+  def today_is_monday?
+    Date.today.wday == MONDEY_INDEX
+  end
 end
