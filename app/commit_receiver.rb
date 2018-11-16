@@ -13,23 +13,24 @@ class Commit
   MONDEY_INDEX = 1
 
   def initialize
-    # @message = self.class.get_from_github
     @message = ''
   end
 
-  def get_from_github
+  def get_commit
     num_of_days = today_is_monday? ? 3 : 1
     commit_lists = fetch_commits.select do |commit|
       neccesary_commit?(date_of(commit), num_of_days)
     end
 
-    commit_lists.each.with_index(1) do |commit, index|
+    message = commit_lists.each.with_index(1) do |commit, index|
       formated_message = commit[:commit][:message].gsub(/\*(.*?)\n/, '')
                                                   .gsub(/(\r\n?|\n)/, '')
       author = commit[:author][:login]
       @message += "#{index}. #{formated_message}(#{author})\n"
     end
   end
+
+  private
 
   def fetch_commits
     client = Octokit::Client.new login: ENV['LOGIN'], password: ENV['PASSWORD']
